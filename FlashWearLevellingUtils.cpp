@@ -70,11 +70,11 @@ bool FlashWearLevellingUtils<varType>::read(uint8_t* buff, size_t length) {
  */
 template <class varType>
 void FlashWearLevellingUtils<varType>::setCallbacks(FlashWearLevellingCallbacks* pCallbacks) {
-	if (pCallbacks != nullptr) {
-		_pCallbacks = pCallbacks;
-	} else {
-		_pCallbacks = &defaultCallback;
-	}
+    if (pCallbacks != nullptr) {
+        _pCallbacks = pCallbacks;
+    } else {
+        _pCallbacks = &defaultCallback;
+    }
     FWL_TAG_INFO(">> setCallbacks: 0x%x << setCallbacks", (uint32_t)_pCallbacks);
 } // setCallbacks
 
@@ -110,7 +110,7 @@ FlashWearLevellingCallbacks::~FlashWearLevellingCallbacks() {}
  * @param [in] length The length of buffer write into flash.
  */
 bool FlashWearLevellingCallbacks::onRead(uint8_t* buff, size_t* length) {
-	FWL_TAG_INFO(">> onRead: default << onRead");
+    FWL_TAG_INFO(">> onRead: default << onRead");
     return true;
 } // onRead
 
@@ -120,7 +120,7 @@ bool FlashWearLevellingCallbacks::onRead(uint8_t* buff, size_t* length) {
  * @param [in] length The length of buffer write into flash.
  */
 bool FlashWearLevellingCallbacks::onWrite(uint8_t* buff, size_t* length) {
-	FWL_TAG_INFO(">> onWrite: default << onWrite");
+    FWL_TAG_INFO(">> onWrite: default << onWrite");
     return true;
 } // onWrite
 
@@ -129,7 +129,7 @@ bool FlashWearLevellingCallbacks::onWrite(uint8_t* buff, size_t* length) {
  * @param [in] page The page number need to erase.
  */
 bool FlashWearLevellingCallbacks::onErase(uint32_t page) {
-	FWL_TAG_INFO(">> onErase: default << onErase");
+    FWL_TAG_INFO(">> onErase: default << onErase");
     return true;
 } // onErase
 
@@ -137,7 +137,7 @@ bool FlashWearLevellingCallbacks::onErase(uint32_t page) {
  * @brief Callback function to support a flash status.
  */
 bool FlashWearLevellingCallbacks::onReady() {
-	FWL_TAG_INFO(">> onReady: default << onReady");
+    FWL_TAG_INFO(">> onReady: default << onReady");
     return true;
 } // onReady
 
@@ -146,5 +146,5 @@ bool FlashWearLevellingCallbacks::onReady() {
  * @param [in] s Status of the process handle in memory
  */
 void FlashWearLevellingCallbacks::onStatus(status_t s) {
-	FWL_TAG_INFO(">> onStatus: default << onStatus");
+    FWL_TAG_INFO(">> onStatus: default << onStatus");
 } // onStatus

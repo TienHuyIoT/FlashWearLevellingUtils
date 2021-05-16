@@ -1,9 +1,6 @@
 #include "mbed.h"
 #include "FlashWearLevellingUtils.h"
 
-// Blinking rate in milliseconds
-#define BLINKING_RATE     500ms
-
 #define MAIN_TAG_INFO(f_, ...) printf("\r\n[MAIN ] " f_, ##__VA_ARGS__)
 
 typedef struct {
@@ -45,16 +42,11 @@ int main()
     flash_data_t w_data;
     flash_data_t r_data;
 
-    // Initialise the digital pin LED1 as an output
-    DigitalOut led(LED1);
-
     CVChasingLog.setCallbacks(new FlashHandler);
     CVChasingLog.begin();
     CVChasingLog.write(&w_data);
     CVChasingLog.read(&r_data);
 
     while (true) {
-        led = !led;
-        ThisThread::sleep_for(BLINKING_RATE);
     }
 }
