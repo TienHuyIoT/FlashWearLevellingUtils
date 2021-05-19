@@ -1,5 +1,5 @@
 #include "FlashWearLevellingUtils.h"
-#include "crc32.h"
+#include "util_crc32.h"
 
 /**
  * @brief Calculator CRC32 buffer.
