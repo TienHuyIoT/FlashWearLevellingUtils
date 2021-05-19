@@ -553,30 +553,67 @@ bool FlashWearLevellingUtils<varType>::writeOut(uint32_t addr, uint8_t* buff, ui
 template <class varType>
 bool FlashWearLevellingUtils<varType>::eraseData(uint32_t addr, uint16_t length)
 {
-    uint32_t offset_addr, size_remain, erase_addr;
+    uint32_t offset_addr, remain_size, erase_addr;
     bool status_isOK = true;
 
     offset_addr = addr % _page_size;
-    size_remain = _page_size - offset_addr;
-    erase_addr = addr + size_remain;
-    while (length >= size_remain)
+    remain_size = _page_size - offset_addr;
+    erase_addr = addr + remain_size;
+
+    /* Write data with write_length 
+        uint32_t write_length;
+        if (length >= remain_size)
+        {
+            write_length = remain_size;
+        }
+        else
+        {
+            write_length = length;
+        }
+        _pCallbacks->onWrite(addr, buff, write_length);
+    */
+
+    while (length >= remain_size)
     {
+        /* Assert memory size */
         if ((erase_addr + _page_size) > (_start_addr + _memory_size))
         {
             status_isOK = false;
             break;
         }
 
+        /* Erase next page */
         if(!_pCallbacks->onErase(erase_addr, _page_size))
         {
             status_isOK = false;
             break;
         }
 
-        length -= size_remain;
-        size_remain = _page_size;
+        /* Remain Length */
+        length -= remain_size;
+        /* Write data with write_length
+            if (length >= _page_size)
+            {
+                write_length = _page_size;
+            }
+            else
+            {
+                write_length = length;
+            }
+
+            if(write_length > 0)
+            {
+                _pCallbacks->onWrite(erase_addr, buff, write_length);
+            }
+        */
+
+        /* new remain size is equal page size */
+        remain_size = _page_size;
+
+        /* update address to erase next page */
         erase_addr += _page_size;
-    }
+    } // while (length >= remain_size)
+
     return status_isOK;
 }
 
