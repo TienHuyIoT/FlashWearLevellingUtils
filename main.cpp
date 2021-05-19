@@ -24,8 +24,8 @@ class FlashHandler: public FlashWearLevellingCallbacks {
         return true;
     }
 
-    bool onErase(uint32_t page) {
-        MAIN_TAG_INFO("[FlashHandler] onErase page %u", page);
+    bool onErase(uint32_t addr, uint16_t length) {
+        MAIN_TAG_INFO("flash onErase length %u", length);
         return true;
     }
 
