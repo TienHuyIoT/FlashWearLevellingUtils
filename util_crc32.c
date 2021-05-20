@@ -1,5 +1,4 @@
-/** @file crc32.h
- *  @brief To porting some of type, value to mismatch with platform
+/** @file util_crc32.h
  */
 
 /******************************************************************************/

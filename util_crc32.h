@@ -1,9 +1,24 @@
-/** @file crc32.h
+/** @file util_crc32.h
  *  @brief To porting some of type, value to mismatch with platform
+ *
+ *  @author Luong Thanh Tho, tienhuyiot
+ *  @note No Note at the moment
+ *  @bug No known bugs.
+ *
+ * <pre>
+ * MODIFICATION HISTORY:
+ *
+ * Ver    Who        Date             Changes
+ * -----  --------   ----------       -----------------------------------------------
+ * 1.1    Tienhuyiot May 20, 2021     Add header C++, rename lib
+ * 1.0    Thanh Tho  Oct 30, 2020     First release
+ *
+ *
+ *</pre>
  */
 /* MODULE BSP */
-#ifndef __CRC32_H
-#define __CRC32_H
+#ifndef __UTIL_CRC32_H
+#define __UTIL_CRC32_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -53,4 +68,4 @@ uint32_t Crc32_CalculateBuffer(const uint8_t * buffer, uint32_t length);
 }
 #endif
 
-#endif /* __CRC32_H_ */
+#endif /* __UTIL_CRC32_H */

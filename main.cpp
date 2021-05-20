@@ -5,13 +5,24 @@
 
 #include "mbed.h"
 #include "FlashWearLevellingUtils.h"
+// https://os.mbed.com/users/GlimwormBeacons/code/SEGGER_RTT/
+#include "SEGGER_RTT.h"
 
 #define MAIN_TAG_INFO(f_, ...) //printf("\r\n[MAIN] " f_, ##__VA_ARGS__)
-#define MAIN_TAG_DBG(f_, ...)   do{\
+
+#define rtt_DBG(f_, ...)   do{\
+                                SEGGER_RTT_printf(0, "\r\n[MAIN] ");\
+                                SEGGER_RTT_printf(0, f_, ##__VA_ARGS__);\
+                                SEGGER_RTT_printf(0, "\r\n");\
+                            }while(0)
+
+#define serial_DBG(f_, ...)   do{\
                                     printf("\r\n[MAIN] ");\
                                     printf(f_, ##__VA_ARGS__);\
                                     printf("\r\n");\
                                 }while(0)
+
+#define MAIN_TAG_DBG rtt_DBG
 
 typedef struct {
     uint32_t a;
