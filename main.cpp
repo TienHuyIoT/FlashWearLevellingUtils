@@ -1,35 +1,18 @@
-/* mbed Microcontroller Library
- * Copyright (c) 2019 ARM Limited
- * SPDX-License-Identifier: Apache-2.0
- */
-
 #include "mbed.h"
 #include "FlashWearLevellingUtils.h"
-// https://os.mbed.com/users/GlimwormBeacons/code/SEGGER_RTT/
-#include "SEGGER_RTT.h"
+#include "console_dbg.h"
 
-#define MAIN_TAG_INFO(f_, ...) //printf("\r\n[MAIN] " f_, ##__VA_ARGS__)
-
-#define rtt_DBG(f_, ...)   do{\
-                                SEGGER_RTT_printf(0, "\r\n[MAIN] ");\
-                                SEGGER_RTT_printf(0, f_, ##__VA_ARGS__);\
-                                SEGGER_RTT_printf(0, "\r\n");\
-                            }while(0)
-
-#define serial_DBG(f_, ...)   do{\
-                                    printf("\r\n[MAIN] ");\
-                                    printf(f_, ##__VA_ARGS__);\
-                                    printf("\r\n");\
-                                }while(0)
-
-#define MAIN_TAG_DBG rtt_DBG
+/* Private macro -------------------------------------------------------------*/
+#define MAIN_TAG_DBG(...) CONSOLE_TAG_LOGI("[MAIN]", __VA_ARGS__)
+#define FWL_TAG_CALLBACK(...) CONSOLE_TAG_LOGI("[FWL_CB]", __VA_ARGS__)
+#define MAIN_CONSOLE(...) CONSOLE_LOGI(__VA_ARGS__)
 
 typedef struct {
     uint32_t a;
 } flash_data_t;
 
 /* Declare object flash data type handler */
-FlashWearLevellingUtils<flash_data_t> CVChasingLog(0, 256, 64);
+FlashWearLevellingUtils u32_log(0, 256, 64, sizeof(flash_data_t));
 
 class v_memory {
 private:
@@ -80,22 +63,22 @@ v_memory v_testAPI(1024);
 /* Register callback handler external flash memory */
 class FlashHandler: public FlashWearLevellingCallbacks {
     bool onRead(uint32_t addr, uint8_t *buff, uint16_t *length) {
-        MAIN_TAG_INFO("[FlashHandler] onRead data [addr][length]: [%u(0x%x)][%u]", addr, addr, *length);
+        FWL_TAG_CALLBACK("[FlashHandler] onRead data [addr][length]: [%u(0x%x)][%u]", addr, addr, *length);
         return v_testAPI.read(addr, buff, length);
     }
 
     bool onWrite(uint32_t addr, uint8_t *buff, uint16_t *length) {
-        MAIN_TAG_INFO("[FlashHandler] onWrite data [addr][length]: [%u(0x%x)][%u]", addr, addr, *length);
+        FWL_TAG_CALLBACK("[FlashHandler] onWrite data [addr][length]: [%u(0x%x)][%u]", addr, addr, *length);
         return v_testAPI.write(addr, buff, length);
     }
 
     bool onErase(uint32_t addr, uint16_t length) {
-        MAIN_TAG_INFO("flash onErase [addr][length]: [%u(0x%x)][%u]", addr, addr, length);
+        FWL_TAG_CALLBACK("flash onErase [addr][length]: [%u(0x%x)][%u]", addr, addr, length);
         return v_testAPI.erase(addr, length);
     }
 
     bool onReady() {
-        MAIN_TAG_INFO("[FlashHandler] onReady");
+        FWL_TAG_CALLBACK("[FlashHandler] onReady");
         return true;
     }
 
@@ -116,35 +99,35 @@ void fwl_testCase()
     for (int i = 0; i < 1270 /* RANDOM */; ++i)
     {
         w_data.a++;
-        if (!CVChasingLog.write(&w_data))
+        if (!u32_log.write(&w_data))
         {
-            MAIN_TAG_DBG("[CVChasingLog] read data failed!");
+            MAIN_TAG_DBG("[u32_log] read data failed!");
             break;
         }
     }
 
-    if (CVChasingLog.read(&r_data))
+    if (u32_log.read(&r_data))
     {
-        MAIN_TAG_DBG("[CVChasingLog] r_data.a = %u", r_data.a);
+        MAIN_TAG_DBG("[u32_log] r_data.a = %u", r_data.a);
 
-        memory_cxt_t* info = CVChasingLog.info();
-        MAIN_TAG_DBG("[CVChasingLog] Addr: %u(0x%X)", info->header.addr, info->header.addr);
-        MAIN_TAG_DBG("[CVChasingLog] crc32: 0x%X", info->header.crc32);
-        MAIN_TAG_DBG("[CVChasingLog] next Addr: %u(0x%X)", info->header.nextAddr, info->header.nextAddr);
-        MAIN_TAG_DBG("[CVChasingLog] prev Addr: %u(0x%X)", info->header.prevAddr, info->header.prevAddr);
-        MAIN_TAG_DBG("[CVChasingLog] data length: %u", info->header.dataLength);
+        memory_cxt_t info = u32_log.info();
+        MAIN_TAG_DBG("[u32_log] Addr: %u(0x%X)", info.header.addr, info.header.addr);
+        MAIN_TAG_DBG("[u32_log] crc32: 0x%X", info.header.crc32);
+        MAIN_TAG_DBG("[u32_log] next Addr: %u(0x%X)", info.header.nextAddr, info.header.nextAddr);
+        MAIN_TAG_DBG("[u32_log] prev Addr: %u(0x%X)", info.header.prevAddr, info.header.prevAddr);
+        MAIN_TAG_DBG("[u32_log] data length: %u", info.header.dataLength);
     }
 
     /* Try format API */
-    if (CVChasingLog.format())
+    if (u32_log.format())
     {
-        if (CVChasingLog.read(&r_data))
+        if (u32_log.read(&r_data))
         {
-            MAIN_TAG_DBG("[CVChasingLog] r_data.a = %u", r_data.a);
+            MAIN_TAG_DBG("[u32_log] r_data.a = %u", r_data.a);
         }
         else
         {
-            MAIN_TAG_DBG("[CVChasingLog] no Data [TRUE]");
+            MAIN_TAG_DBG("[u32_log] no Data [TRUE]");
         }
     }
 }
@@ -158,17 +141,17 @@ int main()
     // Initialise the digital pin LED1 as an output
     DigitalOut led(LED1);
 
-    MAIN_TAG_DBG("[setup] CVChasingLog setCallbacks");
-    CVChasingLog.setCallbacks(new FlashHandler);
+    MAIN_TAG_DBG("[setup] u32_log setCallbacks");
+    u32_log.setCallbacks(new FlashHandler);
 
-    MAIN_TAG_DBG("[setup] CVChasingLog begin");
-    if (CVChasingLog.begin(true))
+    MAIN_TAG_DBG("[setup] u32_log begin");
+    if (u32_log.begin(true))
     {
         fwl_testCase();
     }
     else
     {
-        MAIN_TAG_DBG("[setup] CVChasingLog begin failed!");
+        MAIN_TAG_DBG("[setup] u32_log begin failed!");
     }
 
     while (true) {

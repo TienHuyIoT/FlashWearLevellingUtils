@@ -1,0 +1,7 @@
+*.mbed
+*BUILD
+*.vscode
+*mbed-os
+*resources
+*.py*
+.mbed
